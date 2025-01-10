@@ -46,7 +46,8 @@ public class SocialApplication {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests()
-			.requestMatchers("/*", "/oauth2/**", "/login/**", "/error", "/webjars/**").permitAll()
+			.requestMatchers("/*", "/oauth2/**", "/login/**", "/error", "/webjars/**","/logout")
+			.permitAll()
 			.anyRequest().fullyAuthenticated()
 				.and()
 			.oauth2Login();
@@ -54,12 +55,9 @@ public class SocialApplication {
 			.exceptionHandling(e -> e
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 			)
-			.csrf(c -> c
-				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-			)
-			.logout(l -> l
-				.logoutSuccessUrl("/").permitAll()
-			);
+			.csrf().disable()
+			.logout()
+			.logoutSuccessUrl("/login.html").permitAll();
 			
 		return http.build();
 	}
