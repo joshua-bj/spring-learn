@@ -14,14 +14,10 @@
     src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>This is application first</h1>
     <div class="container unauthenticated">
-        <div>
-            With tenant01: <a href="/oauth2/authorization/tenant01">click here</a>
-        </div>
-        <div>
-            With tenant04: <a href="/oauth2/authorization/tenant04">click here</a>
-        </div>
+        <input type="text" id="tenantid" placeholder="Type your tenant id..."/>
+        <button onclick="login()" class="btn btn-primary">Login</button>
     </div>
     <div class="container authenticated" style="display: none">
         Logged in as: <span id="user"></span>
@@ -29,34 +25,46 @@
             <button onClick="logout()" class="btn btn-primary">Logout</button>
         </div>
     </div>
+    <div>
+      To application second: <a href="http://localhost:8082/login.html">Application Second</a>
+    </div>
+    <div></div>
+      To Myself: <a href="/user">user</a>
+    </div>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script type="text/javascript">
-          $.ajaxSetup({
-            beforeSend : function(xhr, settings) {
-              if (settings.type == 'POST' || settings.type == 'PUT'
-                  || settings.type == 'DELETE') {
-                if (!(/^http:.*/.test(settings.url) || /^https:.*/
-                    .test(settings.url))) {
-                  // Only send the token to relative URLs i.e. locally.
-                  xhr.setRequestHeader("X-XSRF-TOKEN", Cookies
-                      .get('XSRF-TOKEN'));
-                }
-              }
+      $.ajaxSetup({
+        beforeSend : function(xhr, settings) {
+          if (settings.type == 'POST' || settings.type == 'PUT'
+              || settings.type == 'DELETE') {
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                .test(settings.url))) {
+              // Only send the token to relative URLs i.e. locally.
+              xhr.setRequestHeader("X-XSRF-TOKEN", Cookies
+                  .get('XSRF-TOKEN'));
             }
-          });
-          $.get("/user", function(data) {
-              $("#user").html(data.name);
-              $(".unauthenticated").hide();
-              $(".authenticated").show();
-          });
-          var logout = function() {
-            $.post("/logout", function() {
-              $("#user").html('');
-              $(".unauthenticated").show();
-              $(".authenticated").hide();
-            })
-            return true;
           }
-        </script>
+        }
+      });
+      $.get("/user", function(data) {
+          $("#user").html(data.name);
+          $(".unauthenticated").hide();
+          $(".authenticated").show();
+      });
+      var logout = function() {
+        $.post("/logout", function() {
+          $("#user").html('');
+          $(".unauthenticated").show();
+          $(".authenticated").hide();
+        })
+        return true;
+      }
+      var login = function() {
+        const inputValue = document.getElementById('tenantid').value.trim();
+        const link = `/oauth2/authorization/${encodeURIComponent(inputValue)}`;
+        console.log(`${link}`);
+        window.location.href = `${link}`;            
+      }
+    </script>
 </body>
 </html>

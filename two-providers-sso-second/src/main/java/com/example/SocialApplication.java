@@ -39,7 +39,7 @@ public class SocialApplication {
 
 	@RequestMapping("/user")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-		return principal.getAttributes();
+		return Collections.singletonMap("name", principal.getAttribute("name"));
 	}
 
 	@Bean
