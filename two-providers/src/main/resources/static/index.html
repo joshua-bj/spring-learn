@@ -29,10 +29,12 @@
       To application second: <a href="http://localhost:8082/login.html">Application Second</a>
     </div>
     <div></div>
-      To Myself: <a href="/user">user</a>
+      To Myself: <a id="dynamicuser" href="#" onclick="setDynamicHref()">user</a>
     </div>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script type="text/javascript">
+      var userUrl;
+      var tenantId;
       $.ajaxSetup({
         beforeSend : function(xhr, settings) {
           if (settings.type == 'POST' || settings.type == 'PUT'
@@ -46,11 +48,26 @@
           }
         }
       });
-      $.get("/user", function(data) {
-          $("#user").html(data.name);
-          $(".unauthenticated").hide();
-          $(".authenticated").show();
+
+      $(document).ready ( function(){
+        tenantId = document.getElementById('tenantid').value.trim();
+        console.log(`Get tenant id: ${tenantId}`);
+        if(tenantId) {
+          userUrl = "/" + tenantId + "/user";
+        }
+        else {
+          userUrl = "/user";
+        }
+        console.log('Set userUrl:'+userUrl);
+
+        $.get(userUrl, function(data) {
+            console.log('At founction get userUrl:' + userUrl);
+            $("#user").html(data.name);
+            $(".unauthenticated").hide();
+            $(".authenticated").show();
+        });
       });
+
       var logout = function() {
         $.post("/logout", function() {
           $("#user").html('');
@@ -60,10 +77,14 @@
         return true;
       }
       var login = function() {
-        const inputValue = document.getElementById('tenantid').value.trim();
-        const link = `/oauth2/authorization/${encodeURIComponent(inputValue)}`;
+        tenantId = document.getElementById('tenantid').value.trim();
+        console.log(`Get tenant id at login: ${tenantId}`);
+        const link = `/oauth2/authorization/${encodeURIComponent(tenantId)}`;
         console.log(`${link}`);
         window.location.href = `${link}`;            
+      }
+      function setDynamicHref() {
+          document.getElementById("dynamicuser").href = `${tenantId}`;
       }
     </script>
 </body>

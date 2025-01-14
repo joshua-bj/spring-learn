@@ -15,33 +15,19 @@
  */
 package com.example;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 
 @SpringBootApplication
-@RestController
 @Configuration
-public class SocialApplication {
-
-	@RequestMapping("/user")
-	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-		return principal.getAttributes();
-	}
-
+public class SocialApplication {	
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
@@ -50,7 +36,7 @@ public class SocialApplication {
 			.permitAll()
 			.anyRequest().fullyAuthenticated()
 				.and()
-			.oauth2Login();
+			.oauth2Login().successHandler(new DynamicRedirectSuccessHandler());
 		http						
 			.exceptionHandling(e -> e
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
