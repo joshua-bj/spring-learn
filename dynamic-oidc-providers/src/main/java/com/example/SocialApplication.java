@@ -33,7 +33,7 @@ public class SocialApplication {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests()
-			.requestMatchers("/oauth2/**", "/login/**", "/error", "/webjars/**","/logout")
+			.requestMatchers("/oauth2/**", "/login/**", "/error", "/webjars/**","/logout","/*")
 				.permitAll()
 			.anyRequest().fullyAuthenticated()
 				.and()
@@ -42,7 +42,7 @@ public class SocialApplication {
 		http						
 			.csrf().disable()
 			.logout()
-			.logoutSuccessUrl("/login.html").permitAll();
+			.logoutSuccessUrl("/").permitAll();
 			
 		return http.build();
 	}

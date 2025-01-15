@@ -13,6 +13,46 @@
 </head>
 <body>
 	<h1>这个是选择租户的登录页面</h1>
-	<div class="container"></div>
+	<div class="container unauthenticated">
+        <input type="text" id="tenantid" placeholder="Type your tenant id..."/>
+        <button onclick="login()" class="btn btn-primary">Login</button>
+    </div>
+    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    <script type="text/javascript">
+      var userUrl;
+      var tenantId;
+
+      $(document).ready ( function(){
+        // Parse the URL parameters
+        const params = new URLSearchParams(window.location.search);
+        // Get specific parameter values
+        tenantId = params.get('tenant'); 
+        if(tenantId) {
+            document.getElementById('tenantid').style.display = 'none';
+        }
+        else {
+            tenantId = document.getElementById('tenantid').value.trim();
+        }
+        
+        console.log(`Get tenant id: ${tenantId}`);
+      });
+
+      var login = function() {
+        // Parse the URL parameters
+        const params = new URLSearchParams(window.location.search);
+        // Get specific parameter values
+        tenantId = params.get('tenant'); 
+        if(tenantId) {
+            document.getElementById('tenantid').style.display = 'none';
+        }
+        else {
+            tenantId = document.getElementById('tenantid').value.trim();
+        }
+        console.log(`Get tenant id at login: ${tenantId}`);
+        const link = `/restricted?tenant=${encodeURIComponent(tenantId)}`;
+        console.log(`${link}`);
+        window.location.href = `${link}`;            
+      }
+    </script>
 </body>
 </html>
