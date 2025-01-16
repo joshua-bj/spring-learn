@@ -25,6 +25,10 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 @Configuration
@@ -50,7 +54,11 @@ public class SocialApplication {
 		http						
 			.csrf().disable()
 			.logout()
-			.logoutSuccessUrl("/").permitAll();
+				.logoutSuccessHandler(oidcLogoutSuccessHandler()) // Custom logout handler
+				.invalidateHttpSession(true)
+				.clearAuthentication(true)
+				.deleteCookies("JSESSIONID")
+				.permitAll();
 			
 		return http.build();
 	}
@@ -60,6 +68,8 @@ public class SocialApplication {
     }
 
     private ClientRegistration tenantClientRegistration() {
+		Map<String, Object> configurationMetadata = new HashMap<String, Object>();
+		configurationMetadata.put("end_session_endpoint", "http://localhost:8080/realms/tenant01/protocol/openid-connect/logout");
         return ClientRegistration.withRegistrationId("tenant01")
             .clientId("spring-boot-client")
             .clientSecret("bV04GWXCHEGeAJhTCyPwm0qLNBqJGd3T")
@@ -68,11 +78,23 @@ public class SocialApplication {
             .tokenUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/token")
             .userInfoUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/userinfo")
 			.jwkSetUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/certs")
+			.providerConfigurationMetadata(configurationMetadata)
             .userNameAttributeName("sub")
             .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
             .authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
             .build();
     }
+
+	public OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
+		// Configure the logout success handler to redirect to Keycloak logout endpoint
+		OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler =
+				new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository());
+
+		// Optional: Set the post-logout redirect URI (where the user is redirected after logout)
+		logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8081");
+
+		return logoutSuccessHandler;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SocialApplication.class, args);
