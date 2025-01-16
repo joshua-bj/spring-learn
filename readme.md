@@ -6,3 +6,14 @@ As it needs connect with KeyCloak 26.0.7, the original spring boot version `2.2.
 Unexpected type of JSON object member with key "mtls_endpoint_aliases"
 ```
 
+## Development 
+### how to run this spring boot application
+```
+mvn spring-boot:run
+```
+
+### how to run this spring boot application at debug mode
+```
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+```
+

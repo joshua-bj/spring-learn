@@ -20,14 +20,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 
 @SpringBootApplication
 @Configuration
 public class SocialApplication {
+
+	private final CustomSecurityFilter customSecurityFilter;
+
+    public SocialApplication(CustomSecurityFilter customSecurityFilter) {
+        this.customSecurityFilter = customSecurityFilter;
+    }
 
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -37,6 +44,7 @@ public class SocialApplication {
 				.permitAll()
 			.anyRequest().fullyAuthenticated()
 				.and()
+			.addFilterBefore(customSecurityFilter, SecurityContextHolderFilter.class)
 			.oauth2Login()
 				.clientRegistrationRepository(clientRegistrationRepository());
 		http						
