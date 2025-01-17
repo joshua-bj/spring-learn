@@ -27,6 +27,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +57,9 @@ public class SocialApplication {
 				.clientRegistrationRepository(clientRegistrationRepository());
 		http						
 			.csrf().disable()
+				.cors().configurationSource(corsConfigurationSource())
+				.and()
+//				.logout().logoutSuccessUrl("http://localhost:8080/realms/tenant01/protocol/openid-connect/logout").permitAll();
 			.logout()
 				.logoutSuccessHandler(oidcLogoutSuccessHandler()) // Custom logout handler
 				.invalidateHttpSession(true)
@@ -98,6 +105,18 @@ public class SocialApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SocialApplication.class, args);
+	}
+
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.addAllowedOrigin("http://localhost:9081");
+		configuration.addAllowedMethod("*"); // Allow all HTTP methods
+		configuration.addAllowedHeader("*"); // Allow all headers
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("http://localhost:8080/**", configuration);
+		return source;
 	}
 
 }
