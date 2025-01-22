@@ -27,7 +27,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,9 +38,9 @@ import java.util.Map;
 @Configuration
 public class SocialApplication {
 
-	private final CustomSecurityFilter customSecurityFilter;
+	private final MultiPurposeSecurityFilter customSecurityFilter;
 
-    public SocialApplication(CustomSecurityFilter customSecurityFilter) {
+    public SocialApplication(MultiPurposeSecurityFilter customSecurityFilter) {
         this.customSecurityFilter = customSecurityFilter;
     }
 

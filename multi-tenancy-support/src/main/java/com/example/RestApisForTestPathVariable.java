@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/{tenantid}")
-public class RestApis {
+@RequestMapping("/{tenantId}")
+public class RestApisForTestPathVariable {
     @RequestMapping("/user")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal, 
-		@PathVariable String tenantid) {
-		System.out.println("Tenant id is: " + tenantid);
+		@PathVariable String tenantId) {
+		System.out.println("Tenant id is: " + tenantId);
 		return principal.getAttributes();
 	}
 

@@ -11,13 +11,15 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component
-public class CustomSecurityFilter extends OncePerRequestFilter {
+public class MultiPurposeSecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
                                     HttpServletResponse response, 
                                     FilterChain filterChain) throws ServletException, IOException {
-        // Access the HttpServletRequest
+        // So far we only have one purpose: read the tenant ID from URL parameter
+        // then set it at session, so it can be read back at the following activities at the same session
+
         String requestUri = request.getRequestURI();
         Map<String, String[]> parameterMap = request.getParameterMap();
         String parameters = Utils.mapToString(parameterMap);
