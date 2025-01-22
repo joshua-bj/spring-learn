@@ -27,6 +27,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -53,7 +54,9 @@ public class SocialApplication {
 			.anyRequest().fullyAuthenticated()
 				.and()
 			.addFilterBefore(customSecurityFilter, SecurityContextHolderFilter.class)
+		//	.exceptionHandling().authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login/oauth2"))
 			.oauth2Login()
+				.loginPage("/login/oauth2")
 				.clientRegistrationRepository(clientRegistrationRepository());
 		http						
 			.csrf().disable()
@@ -71,15 +74,15 @@ public class SocialApplication {
 	}
 
 	public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(tenantClientRegistration());
+        return new InMemoryClientRegistrationRepository(tenant01ClientRegistration(), tenant02ClientRegistration());
     }
 
-    private ClientRegistration tenantClientRegistration() {
+    private ClientRegistration tenant01ClientRegistration() {
 		Map<String, Object> configurationMetadata = new HashMap<String, Object>();
 		configurationMetadata.put("end_session_endpoint", "http://localhost:8080/realms/tenant01/protocol/openid-connect/logout");
         return ClientRegistration.withRegistrationId("tenant01")
             .clientId("spring-boot-client")
-            .clientSecret("bV04GWXCHEGeAJhTCyPwm0qLNBqJGd3T")
+            .clientSecret("B1ROQ53Oo5ODN2N1z27rJat1JP0ufaBG")
             .scope("openid", "profile", "offline_access")
             .authorizationUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/auth")
             .tokenUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/token")
@@ -91,6 +94,24 @@ public class SocialApplication {
             .authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
             .build();
     }
+
+	private ClientRegistration tenant02ClientRegistration() {
+		Map<String, Object> configurationMetadata = new HashMap<String, Object>();
+		configurationMetadata.put("end_session_endpoint", "http://localhost:8080/realms/tenant02/protocol/openid-connect/logout");
+		return ClientRegistration.withRegistrationId("tenant02")
+				.clientId("spring-boot-client")
+				.clientSecret("WauO7zGLQzSLKSxFC4ZZb5SHVrLNguCJ")
+				.scope("openid", "profile", "offline_access")
+				.authorizationUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/auth")
+				.tokenUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/token")
+				.userInfoUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/userinfo")
+				.jwkSetUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/certs")
+				.providerConfigurationMetadata(configurationMetadata)
+				.userNameAttributeName("sub")
+				.redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+				.authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
+				.build();
+	}
 
 	public OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
 		// Configure the logout success handler to redirect to Keycloak logout endpoint

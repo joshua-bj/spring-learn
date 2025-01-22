@@ -1,28 +1,28 @@
 ## keycloak
-spring:
-  security:
-    oauth2:
-      client:
-        provider:
-          tenant01:
-            issuer-uri: http://localhost:8080/realms/tenant01
-          tenant04:
-            issuer-uri: http://localhost:8080/realms/tenant04
-        registration:
-          tenant01:
-            provider: tenant01
-            client-name: spring-boot-client
-            client-id: spring-boot-client
-            client-secret: bV04GWXCHEGeAJhTCyPwm0qLNBqJGd3T
-            scope: openid,offline_access,profile
-            authorization-grant-type: authorization_code
-          tenant04:
-            provider: tenant04
-            client-name: spring-boot-client
-            client-id: spring-boot-client
-            client-secret: XD7E71SEV6LU1NgP9JroDAz5Sa8vN64Z
-            scope: openid,offline_access,profile
-            authorization-grant-type: authorization_code
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        provider:
+#          tenant01:
+#            issuer-uri: http://localhost:8080/realms/tenant01
+#          tenant02:
+#            issuer-uri: http://localhost:8080/realms/tenant02
+#        registration:
+#          tenant01:
+#            provider: tenant01
+#            client-name: spring-boot-client
+#            client-id: spring-boot-client
+#            client-secret: B1ROQ53Oo5ODN2N1z27rJat1JP0ufaBG
+#            scope: openid,offline_access,profile
+#            authorization-grant-type: authorization_code
+#          tenant04:
+#            provider: tenant02
+#            client-name: spring-boot-client
+#            client-id: spring-boot-client
+#            client-secret: WauO7zGLQzSLKSxFC4ZZb5SHVrLNguCJ
+#            scope: openid,offline_access,profile
+#            authorization-grant-type: authorization_code
 
 # spring.security.oauth2.client.registration.external.provider=external
 # spring.security.oauth2.client.registration.external.client-name=spring-boot-client
