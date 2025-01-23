@@ -39,24 +39,25 @@ import java.util.Map;
 public class SocialApplication {
 
 	private final MultiPurposeSecurityFilter customSecurityFilter;
+	private final ClientRegistrationService clientRegistrationService;
 
-    public SocialApplication(MultiPurposeSecurityFilter customSecurityFilter) {
+    public SocialApplication(MultiPurposeSecurityFilter customSecurityFilter, ClientRegistrationService clientRegistrationService) {
         this.customSecurityFilter = customSecurityFilter;
+		this.clientRegistrationService = clientRegistrationService;
     }
 
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests()
-			.requestMatchers("/oauth2/**", "/login/**", "/error", "/webjars/**","/logout","/*")
+			.requestMatchers("/oauth2/**", "/login/**", "/error", "/webjars/**","/logout","/*","/config/**")
 				.permitAll()
 			.anyRequest().fullyAuthenticated()
 				.and()
 			.addFilterBefore(customSecurityFilter, SecurityContextHolderFilter.class)
-		//	.exceptionHandling().authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint("/login/oauth2"))
 			.oauth2Login()
 				.loginPage("/login/oauth2")
-				.clientRegistrationRepository(clientRegistrationRepository());
+				.clientRegistrationRepository(clientRegistrationService.getRepository());
 		http						
 			.csrf().disable()
 				.cors().configurationSource(corsConfigurationSource())
@@ -72,59 +73,15 @@ public class SocialApplication {
 		return http.build();
 	}
 
-	public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(tenant01ClientRegistration(), tenant02ClientRegistration());
-    }
-
-    private ClientRegistration tenant01ClientRegistration() {
-		Map<String, Object> configurationMetadata = new HashMap<String, Object>();
-		configurationMetadata.put("end_session_endpoint", "http://localhost:8080/realms/tenant01/protocol/openid-connect/logout");
-        return ClientRegistration.withRegistrationId("tenant01")
-            .clientId("spring-boot-client")
-            .clientSecret("B1ROQ53Oo5ODN2N1z27rJat1JP0ufaBG")
-            .scope("openid", "profile", "offline_access")
-            .authorizationUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/auth")
-            .tokenUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/token")
-            .userInfoUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/userinfo")
-			.jwkSetUri("http://localhost:8080/realms/tenant01/protocol/openid-connect/certs")
-			.providerConfigurationMetadata(configurationMetadata)
-            .userNameAttributeName("sub")
-            .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-            .authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
-            .build();
-    }
-
-	private ClientRegistration tenant02ClientRegistration() {
-		Map<String, Object> configurationMetadata = new HashMap<String, Object>();
-		configurationMetadata.put("end_session_endpoint", "http://localhost:8080/realms/tenant02/protocol/openid-connect/logout");
-		return ClientRegistration.withRegistrationId("tenant02")
-				.clientId("spring-boot-client")
-				.clientSecret("WauO7zGLQzSLKSxFC4ZZb5SHVrLNguCJ")
-				.scope("openid", "profile", "offline_access")
-				.authorizationUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/auth")
-				.tokenUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/token")
-				.userInfoUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/userinfo")
-				.jwkSetUri("http://localhost:8080/realms/tenant02/protocol/openid-connect/certs")
-				.providerConfigurationMetadata(configurationMetadata)
-				.userNameAttributeName("sub")
-				.redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-				.authorizationGrantType(org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE)
-				.build();
-	}
-
 	public OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
 		// Configure the logout success handler to redirect to Keycloak logout endpoint
 		OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler =
-				new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository());
+				new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationService.getRepository());
 
 		// Optional: Set the post-logout redirect URI (where the user is redirected after logout)
 		logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8081");
 
 		return logoutSuccessHandler;
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(SocialApplication.class, args);
 	}
 
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -138,5 +95,12 @@ public class SocialApplication {
 		source.registerCorsConfiguration("http://localhost:8080/**", configuration);
 		return source;
 	}
+
+
+	public static void main(String[] args) {
+		SpringApplication.run(SocialApplication.class, args);
+	}
+
+
 
 }
