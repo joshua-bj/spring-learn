@@ -47,10 +47,7 @@
       });
 
       var logout = function() {
-        $.post("/logout", function() {
-          $("#user").html('');
-        })
-        return true;
+        window.location.href = "/logout";
       }
     </script>
 
