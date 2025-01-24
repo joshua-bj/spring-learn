@@ -38,7 +38,10 @@ public class SocialApplication {
 			.anyRequest().fullyAuthenticated()
 				.and()
 			.oauth2Login()
-				.clientRegistrationRepository(clientRegistrationRepository());
+				.clientRegistrationRepository(clientRegistrationRepository())
+				.and()
+			.oauth2ResourceServer()
+				.jwt();
 		http						
 			.csrf().disable()
 			.logout()

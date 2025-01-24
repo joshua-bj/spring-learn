@@ -1,6 +1,7 @@
 package com.example;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -14,7 +15,15 @@ public class RestApis {
     @RequestMapping("/hello")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
 		System.out.println("/foo/hello is invoked");
-		return principal.getAttributes();
+		if(null!=principal){
+			return principal.getAttributes();
+		}
+		else {
+			Map<String, Object> returnMap = new HashMap<String, Object>();
+			returnMap.put("Hello", "World");
+			return returnMap;
+		}
+
 	}
 
 }
