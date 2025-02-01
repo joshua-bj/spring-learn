@@ -7,6 +7,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
 
+// custom oauth2 login controller which can get tenant id from session
+// then use it to redirect to the right oauth2 client authorization flow
+
 @Controller
 public class TenantAwareLoginController {
 

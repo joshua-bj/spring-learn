@@ -20,19 +20,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
-import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
-
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @SpringBootApplication
 @Configuration
@@ -96,11 +96,31 @@ public class SocialApplication {
 		return source;
 	}
 
+	@Bean
+	public OAuth2AuthorizedClientManager authorizedClientManager(
+			ClientRegistrationRepository clientRegistrationRepository,
+			OAuth2AuthorizedClientRepository authorizedClientRepository) {
+
+		OAuth2AuthorizedClientProvider authorizedClientProvider =
+				OAuth2AuthorizedClientProviderBuilder.builder()
+						.clientCredentials()
+						.build();
+
+		DefaultOAuth2AuthorizedClientManager authorizedClientManager =
+				new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
+
+		authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+
+		return authorizedClientManager;
+	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SocialApplication.class, args);
 	}
-
-
 
 }

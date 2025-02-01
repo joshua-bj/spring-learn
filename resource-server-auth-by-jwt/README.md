@@ -1,2 +1,4 @@
-## Dynamic configure OIDC for client
-This is a quick example for dynamic configure a OIDC provider for client, can retrieve OIDC server configuration from a database. 
+## Purpose of this project
+This project simulate the resource server which trust the JWT which signed by realm **admin**
+
+The client can use OIDC client's id and secret to exchange JWT, that can be used to invoke the APIs which provided by this server.

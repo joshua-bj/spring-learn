@@ -1,14 +1,21 @@
-## keycloak
-#spring:
-#  security:
-#    oauth2:
-#      client:
-#        provider:
+# keycloak
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          admin:
+            token-uri: http://localhost:8080/realms/admin/protocol/openid-connect/token
 #          tenant01:
 #            issuer-uri: http://localhost:8080/realms/tenant01
 #          tenant02:
 #            issuer-uri: http://localhost:8080/realms/tenant02
-#        registration:
+        registration:
+          admin:
+            client-id: function-user
+            client-secret: h6sMic1WTspdsIyIZRp5SSHJdlw3YSze
+            authorization-grant-type: client_credentials
+            scope: openid
 #          tenant01:
 #            provider: tenant01
 #            client-name: spring-boot-client
