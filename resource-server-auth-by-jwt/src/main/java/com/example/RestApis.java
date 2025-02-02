@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/foo")
 public class RestApis {
     @RequestMapping("/hello")
-	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
+	public Map<String, Object> hello(@AuthenticationPrincipal OAuth2User principal) {
 		System.out.println("/foo/hello is invoked");
 		if(null!=principal){
 			return principal.getAttributes();
@@ -23,7 +23,10 @@ public class RestApis {
 			returnMap.put("Hello", "World");
 			return returnMap;
 		}
-
 	}
 
+	@RequestMapping("/hello2")
+	public User hello2() {
+		return new User("joshua", 28);
+	}
 }

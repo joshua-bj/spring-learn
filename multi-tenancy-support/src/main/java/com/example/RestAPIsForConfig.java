@@ -13,13 +13,16 @@ public class RestAPIsForConfig {
 	private final ClientRegistrationService clientRegistrationService;
 	private final TokenService tokenService;
 	private final ApiService apiService;
+	private final ApiServiceWithWebClient apiServiceWithWebClient;
 
 	public RestAPIsForConfig(ClientRegistrationService clientRegistrationService,
 							 TokenService tokenService,
-							 ApiService apiService) {
+							 ApiService apiService,
+							 ApiServiceWithWebClient apiServiceWithWebClient) {
 		this.clientRegistrationService = clientRegistrationService;
 		this.tokenService = tokenService;
 		this.apiService = apiService;
+		this.apiServiceWithWebClient = apiServiceWithWebClient;
 	}
 
     @RequestMapping("/add-client-registry")
@@ -37,5 +40,11 @@ public class RestAPIsForConfig {
 	public String callResourceServer() {
 		String jwt = tokenService.getAccessToken();
 		return apiService.callApiWithJwt(jwt,"http://localhost:8082/foo/hello");
+	}
+
+	@GetMapping("/call-resource-server2")
+	public String callResourceServer2() {
+		String jwt = tokenService.getAccessToken();
+		return apiServiceWithWebClient.fetchData(jwt,"http://localhost:8082/foo/hello2");
 	}
 }
