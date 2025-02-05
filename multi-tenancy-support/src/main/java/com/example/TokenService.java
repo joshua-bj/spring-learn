@@ -5,6 +5,10 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
+
 @Service
 public class TokenService {
 
@@ -14,9 +18,14 @@ public class TokenService {
         this.authorizedClientManager = authorizedClientManager;
     }
 
+    /**
+     * Get access token from client id and client secret
+     *
+     * @return access token
+     */
     public String getAccessToken() {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
-                .withClientRegistrationId("admin") // The ID defined in your application.yml
+                .withClientRegistrationId("admin") // The registration ID defined in your application.yml
                 .principal("client") // A dummy principal; required but doesn't represent a real user
                 .build();
 

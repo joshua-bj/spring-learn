@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author zhangshuo@suzhouxpower.com
+ * Call External REST API with proper authentication
+ *
  */
 
 @Service
