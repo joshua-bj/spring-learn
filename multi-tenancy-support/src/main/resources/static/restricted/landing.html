@@ -23,6 +23,7 @@
     <script type="text/javascript">
       var userUrl;
       var tenantId;
+      var chainCallUrl;
 
       $(document).ready ( function(){
          // Parse the URL parameters
@@ -33,9 +34,11 @@
         console.log(`Get tenant id: ${tenantId}`);
         if(tenantId) {
           userUrl = "/" + tenantId + "/user";
+          chainCallUrl = "/" + tenantId + "/chain-call";
         }
         else {
           userUrl = "/user";
+          chainCallUrl = "/chain-call";
         }
         console.log('Set userUrl:'+userUrl);
 
@@ -43,6 +46,9 @@
             console.log('At founction get userUrl:' + userUrl);
             $("#user").html(data.name);
             $(".authenticated").show();
+        });
+        $.get(chainCallUrl, function(data) {
+            console.log('Get data:' + data);
         });
       });
 

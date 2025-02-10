@@ -33,18 +33,18 @@ public class RestAPIsForConfig {
 
 	@GetMapping("/token")
 	public String fetchToken() {
-		return tokenService.getAccessToken();
+		return tokenService.getAccessTokenForFunctionalUser();
 	}
 
 	@GetMapping("/call-resource-server")
 	public String callResourceServer() {
-		String jwt = tokenService.getAccessToken();
-		return apiService.callApiWithJwt(jwt,"http://localhost:8082/foo/hello");
+		String jwt = tokenService.getAccessTokenForFunctionalUser();
+		return apiService.callApiWithJwt("http://localhost:8082/foo/hello");
 	}
 
 	@GetMapping("/call-resource-server2")
 	public String callResourceServer2() {
-		String jwt = tokenService.getAccessToken();
-		return apiServiceWithWebClient.fetchData(jwt,"http://localhost:8082/foo/hello2");
+		String jwt = tokenService.getAccessTokenForFunctionalUser();
+		return apiServiceWithWebClient.fetchData("http://localhost:8082/foo/hello2");
 	}
 }

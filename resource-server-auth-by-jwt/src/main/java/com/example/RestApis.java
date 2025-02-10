@@ -25,6 +25,11 @@ public class RestApis {
 		}
 	}
 
+	/**
+	 * Test return a Java data model
+	 *
+	 * @return
+	 */
 	@RequestMapping("/hello2")
 	public User hello2() {
 		return new User("joshua", 28);
