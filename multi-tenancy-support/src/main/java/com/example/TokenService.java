@@ -54,7 +54,7 @@ public class TokenService {
 
         if (authentication != null) {
             if (authentication.getPrincipal() instanceof Jwt jwt) {
-                return jwt.getClaim("groups"); // Extract email claim
+                return jwt.getClaim("groups"); // Extract groups claim
             }
             else if (authentication.getPrincipal() instanceof DefaultOidcUser oidcUser) {
                 return oidcUser.getAttribute("groups");
