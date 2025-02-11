@@ -11,9 +11,11 @@ spring:
 #          tenant02:
 #            issuer-uri: http://localhost:8080/realms/tenant02
         registration:
+          # functional user is fixed configuration, while tenant's
+          # registration is dynamic
           admin:
             client-id: function-user
-            client-secret: h6sMic1WTspdsIyIZRp5SSHJdlw3YSze
+            client-secret: 8HSJx59EhboVZ2DTmorMl9Dt3GuxSsTT
             authorization-grant-type: client_credentials
             scope: openid
 #          tenant01:

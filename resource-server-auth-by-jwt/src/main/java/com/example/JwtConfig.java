@@ -1,5 +1,6 @@
 package com.example;
 
+import com.nimbusds.jwt.JWTClaimNames;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.*;
@@ -13,6 +14,11 @@ public class JwtConfig {
         this.jwtIssuerResolver = jwtIssuerResolver;
     }
 
+    /**
+     * Get a JwtDecoder by JWT's iss claim dynamically
+     *
+     * @return
+     */
     @Bean
     public JwtDecoder jwtDecoder() {
         return token -> {
@@ -20,7 +26,7 @@ public class JwtConfig {
             Jwt unverifiedJwt = noIssuerJwtDecoder().decode(token);
 
             // Get issuer from token
-            String issuer = unverifiedJwt.getClaim("iss");
+            String issuer = unverifiedJwt.getClaim(JWTClaimNames.ISSUER);
             if (issuer == null) {
                 throw new IllegalArgumentException("JWT missing 'iss' claim");
             }
@@ -31,7 +37,6 @@ public class JwtConfig {
         };
     }
 
-    @Bean
     public NoIssuerJwtDecoder noIssuerJwtDecoder() {
         return new NoIssuerJwtDecoder();
     }

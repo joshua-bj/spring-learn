@@ -1,39 +1,23 @@
 package com.example;
 
 import com.nimbusds.jwt.JWTClaimNames;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.nimbusds.jwt.proc.JWTProcessor;
-
-import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import java.text.ParseException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Decode a string type JWT to org.springframework.security.oauth2.jwt.Jwt
+ * without signature verification
+ *
+ * if there is a performance issue, consider only return iss claim,
+ * as we only use iss at the following logic
+ */
 public class NoIssuerJwtDecoder implements JwtDecoder {
-
-    private final JWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-
-    public Jwt decode2(String token) {
-        try {
-            // Process JWT without issuer validation
-            var jwtClaims = jwtProcessor.process(token, null);
-
-            return Jwt.withTokenValue(token)
-                    .headers(h -> h.putAll(Map.of("alg", "none"))) // Mock header
-                    .claims(c -> c.putAll(jwtClaims.getClaims()))
-                    .build();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to decode JWT", e);
-        }
-    }
 
     @Override
     public Jwt decode(String token) {
@@ -44,6 +28,8 @@ public class NoIssuerJwtDecoder implements JwtDecoder {
             // Extract claims
             JWTClaimsSet jwtClaims = signedJWT.getJWTClaimsSet();
             Map<String, Object> claims = new HashMap<String, Object>(jwtClaims.getClaims());
+            // nimbusds parse iat,exp,nbf to java.util.Date,
+            // while spring only accept modern java.time.Instant
             if(claims.get(JWTClaimNames.ISSUED_AT) instanceof Date) {
                 claims.put(JWTClaimNames.ISSUED_AT, ((Date) claims.get(JWTClaimNames.ISSUED_AT)).toInstant());
             }
@@ -53,7 +39,6 @@ public class NoIssuerJwtDecoder implements JwtDecoder {
             if(claims.get(JWTClaimNames.NOT_BEFORE) instanceof Date) {
                 claims.put(JWTClaimNames.NOT_BEFORE, ((Date) claims.get(JWTClaimNames.NOT_BEFORE)).toInstant());
             }
-            System.out.println(claims.get("iat").getClass().getName());
             return Jwt.withTokenValue(token)
                     .headers(h -> h.putAll(Map.of("alg", "none"))) // Mock header
                     .claims(c -> c.putAll(claims))
